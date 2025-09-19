@@ -680,34 +680,10 @@ def batch_np_matrix_to_pycolmap(
     for vidx in valid_idx:
         pt = np.asarray(points3d[vidx], dtype=np.float64).reshape(3)
         rgb = np.asarray(points_rgb[vidx], dtype=np.uint8).reshape(3)
-
-        # 檢查 NaN / 無限
-        if not np.all(np.isfinite(pt)):
-            print(f"[SKIP] Invalid 3D point {vidx}: {pt}")
-            continue
-        if rgb.shape != (3,) or not np.all(np.isfinite(rgb)):
-            print(f"[SKIP] Invalid RGB {vidx}: {rgb}")
-            continue
-
-        # 檢查 dtype 和 shape
-        if pt.dtype != np.float64 or pt.shape != (3,):
-            print(f"[ERROR] Bad pt shape or dtype: {pt.shape}, {pt.dtype}")
-            continue
-        if rgb.dtype != np.uint8 or rgb.shape != (3,):
-            print(f"[ERROR] Bad rgb shape or dtype: {rgb.shape}, {rgb.dtype}")
-            continue
-
         pt = np.ascontiguousarray(pt)
         rgb = np.ascontiguousarray(rgb)
-
         track = pycolmap.Track()
-
-        print("Adding point:", vidx, "at", pt, "with RGB", rgb)
-
-        try:
-            reconstruction.add_point3D(pt, track, rgb)
-        except Exception as e:
-            print(f"[EXCEPTION] While adding point {vidx}: {e}")
+        reconstruction.add_point3D(pt, track, rgb)
 
 
 
