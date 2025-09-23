@@ -1,5 +1,4 @@
 *.pyc
-/data/*
-/output/*
+/data/scene/
 /results/*
 /scenes_output
