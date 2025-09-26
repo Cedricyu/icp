@@ -22,7 +22,7 @@ for image_id, im in images.items():
             continue
         u, v = int(round(x)), int(round(y))
         if 0 <= u < w and 0 <= v < h:
-            cv2.circle(mask, (u, v), radius=3, color=255, thickness=-1)
+            cv2.circle(mask, (u, v), radius=1, color=255, thickness=-1)
 
     out_path = os.path.join(mask_dir, f"{im.name}")
     cv2.imwrite(out_path, mask)

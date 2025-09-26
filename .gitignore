@@ -1,4 +1,6 @@
 *.pyc
-/data/scene/
+data/masks
+data
 /results/*
 /scenes_output
+filtered_images
