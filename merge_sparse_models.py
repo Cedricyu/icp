@@ -50,6 +50,7 @@ def merge_models(src_dir, tgt_dir, src_T_path, output_dir):
         )
 
     # 改 image ID 和 camera ID，並套用 T 到 pose
+    pt_id_offset = max(pts_t.keys()) + 1
     img_id_offset = max(imgs_s.keys())-1
     new_imgs_s = {}
     for iid, img in imgs_s.items():
@@ -69,6 +70,14 @@ def merge_models(src_dir, tgt_dir, src_T_path, output_dir):
         R_new = T_new[:3, :3].T
         t_new = -R_new @ T_new[:3, 3]
         qvec_new = rw.rotmat2qvec(R_new)
+
+        new_point3D_ids = []
+        for pid in img.point3D_ids:
+            if pid == -1:
+                new_point3D_ids.append(-1)
+            else:
+                new_point3D_ids.append(pid + pt_id_offset)
+
         new_imgs_s[new_iid] = rw.Image(
             id=new_iid,
             qvec=qvec_new,
@@ -76,11 +85,10 @@ def merge_models(src_dir, tgt_dir, src_T_path, output_dir):
             camera_id=cam_id_map[img.camera_id],
             name=img.name,
             xys=img.xys,
-            point3D_ids=img.point3D_ids,
+            point3D_ids=np.array(new_point3D_ids, dtype=np.int64)      
         )
 
     # 改 point3D ID 並套用 T
-    pt_id_offset = max(pts_t.keys()) + 1
     new_pts_s = {}
     for pid, pt in pts_s.items():
         new_pid = pid + pt_id_offset
