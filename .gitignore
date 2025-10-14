@@ -5,4 +5,3 @@ data
 /scenes_output
 filtered_images
 outputs/*
-outputs/duck_in_scene_local.ply
