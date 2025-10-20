@@ -69,6 +69,7 @@ def merge_models(src_dir, tgt_dir, src_T_path, output_dir):
         t_new = (-R_new @ C_new).flatten()
         qvec_new = rw.rotmat2qvec(R_new)
 
+        print(f"pt_id_offset: {pt_id_offset}")
         new_point3D_ids = []
         for pid in img.point3D_ids:
             if pid == -1:
@@ -85,6 +86,7 @@ def merge_models(src_dir, tgt_dir, src_T_path, output_dir):
             xys=img.xys,
             point3D_ids=np.array(new_point3D_ids, dtype=np.int64)      
         )
+        print(new_point3D_ids)
 
     # 改 point3D ID 並套用 T
     new_pts_s = {}
