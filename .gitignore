@@ -5,3 +5,4 @@ data
 /scenes_output
 filtered_images
 outputs/*
+output/image*

@@ -20,17 +20,15 @@ def parse_colmap(sparse_dir: str | Path):
     points3D = py.read_points3D_binary(sparse_dir / "points3D.bin")
     cameras = py.read_cameras_binary(sparse_dir / "cameras.bin")
 
-    images_pairs = []
-    image_list = []
-    pose_list = []
+    images_pairs = {}
+    pose_list = {}
     point_list = {pid: list(pt.xyz) for pid, pt in points3D.items()}
-    intrinsics = []
+    intrinsics = {}
 
     for img_id, image in images.items():
         R = py.qvec2rotmat(image.qvec)
         t = np.array(image.tvec)
-        pose_list.append([R, t])
-        image_list.append(image.name)
+        pose_list[image.name] = [R, t]
 
         pairs = []
         for xy, pid in zip(image.xys, image.point3D_ids):
@@ -38,7 +36,7 @@ def parse_colmap(sparse_dir: str | Path):
                 continue
             pairs.append([list(xy), pid])
 
-        images_pairs.append(pairs)
+        images_pairs[image.name] = pairs
 
         cam = cameras[image.camera_id]
         print("Camera:", cam.params)
@@ -49,7 +47,7 @@ def parse_colmap(sparse_dir: str | Path):
                 [0,  fy, cy],
                 [0,  0,   1]
             ])
-            intrinsics.append(K)
+            intrinsics[image.name] = K
         elif cam.model == "SIMPLE_PINHOLE":
             f, cx, cy = cam.params
             K = np.array([
@@ -57,11 +55,11 @@ def parse_colmap(sparse_dir: str | Path):
                 [0, f, cy],
                 [0, 0,  1]
             ])
-            intrinsics.append(K)
+            intrinsics[image.name] = K
         else:
             print(f"[警告] 尚未支援相機模型：{cam.model}")
 
-    return images_pairs, image_list, point_list, pose_list, intrinsics
+    return images_pairs, point_list, pose_list, intrinsics
 
 
 
